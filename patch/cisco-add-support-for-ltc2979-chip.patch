@@ -1,0 +1,144 @@
+From cf9ecdabf4d72f93403fffd2c363c5e376fedf7e Mon Sep 17 00:00:00 2001
+From: Madhava Reddy Siddareddygari <msiddare@cisco.com>
+Date: Thu, 10 Jun 2021 10:49:22 -0700
+Subject: [PATCH] hwmon: (pmbus/ltc2978) Add support for new sensor
+
+Current ltc2978 driver does not have support for device ltc2979.
+
+Added support for the sensor device ltc2979.
+Datasheet for the sensor is at followint path.
+www.analog.com/media/en/technical-documentation/data-sheets/2979f.pdf
+
+This chip is used for voltage sensors on cisco-8000 platform.
+
+Testing Done:
+Logs to confirm that chip is detected by driver.
+root@sonic:/home/cisco# cat /var/log/syslog | grep ltc2979 -A 10
+Jun  8 15:06:00.324911 sonic INFO pmon#sensord:
+		Chip: ltc2979-i2c-26-5d
+Jun  8 15:06:00.324965 sonic INFO pmon#sensord:
+		Adapter: i2c-4-mux (chan_id 3)
+Jun  8 15:06:01.196965 sonic INFO pmon#sensord:
+		vin: +12.06 V (min = +0.00 V, max = +13.00 V)
+Jun  8 15:06:01.196965 sonic INFO pmon#sensord:
+		GB_PCIE_VDDH: +1.20 V (min = +1.05 V, max = +1.34 V)
+Jun  8 15:06:01.197151 sonic INFO pmon#sensord:
+		GB_PCIE_VDDACK: +0.75 V (min = +0.66 V, max = +0.84 V)
+Jun  8 15:06:01.197332 sonic INFO pmon#sensord:
+		vout3: +0.50 V (min = +0.15 V, max = +3.75 V)
+Jun  8 15:06:01.197461 sonic INFO pmon#sensord:
+		GB_P1V8_VDDIO: +1.80 V (min = +1.58 V, max = +2.02 V)
+Jun  8 15:06:01.197602 sonic INFO pmon#sensord:
+		GB_P1V8_PLLVDD: +1.80 V (min = +1.58 V, max = +2.02 V)
+Jun  8 15:06:01.197805 sonic INFO pmon#sensord:
+		vout6: +0.15 V (min = +0.15 V, max = +3.75 V)
+Jun  8 15:06:01.197950 sonic INFO pmon#sensord:
+		vout7: +0.08 V (min = +0.15 V, max = +3.75 V)
+Jun  8 15:06:01.198117 sonic INFO pmon#sensord:
+		vout8: +0.54 V (min = +0.15 V, max = +3.75 V)
+
+Command output reteriving data from the sensor chip.
+
+cisco@sonic:~$ show env
+ltc2979-i2c-26-5e
+Adapter: i2c-4-mux (chan_id 3)
+vin: +12.02 V (crit min = +0.00 V, min = +0.00 V)
+(max = +13.00 V, crit max = +14.00 V)
+(lowest = +12.00 V, highest = +12.02 V)
+vout1: +0.00 V (crit min = +1.44 V, min = +1.50 V)
+(max = +1.90 V, crit max = +1.95 V)
+(lowest = +0.00 V, highest = +0.00 V)
+MB_A1V8: +1.80 V (crit min = +1.53 V, min = +1.58 V)
+(max = +2.02 V, crit max = +2.07 V)
+(lowest = +1.80 V, highest = +1.80 V)
+MB_A1V: +1.00 V (crit min = +0.85 V, min = +0.88 V)
+(max = +1.12 V, crit max = +1.15 V)
+(lowest = +1.00 V, highest = +1.00 V)
+MB_A3V3: +3.27 V (crit min = +2.81 V, min = +2.90 V)
+(max = +3.70 V, crit max = +3.79 V)
+(lowest = +3.27 V, highest = +3.27 V)
+MB_A1V2: +1.20 V (crit min = +1.02 V, min = +1.05 V)
+(max = +1.34 V, crit max = +1.38 V)
+(lowest = +1.20 V, highest = +1.20 V)
+MB_P3V3: +3.30 V (crit min = +2.81 V, min = +2.90 V)
+(max = +3.70 V, crit max = +3.79 V)
+(lowest = +3.30 V, highest = +3.30 V)
+vout7: +0.00 V (crit min = +1.10 V, min = +1.14 V)
+(max = +1.46 V, crit max = +1.50 V)
+(lowest = +0.00 V, highest = +0.00 V)
+vout8: +0.00 V (crit min = +1.27 V, min = +1.32 V)
+(max = +1.68 V, crit max = +1.72 V)
+(lowest = +0.00 V, highest = +0.00 V)
+
+Signed-off-by: Madhava Reddy Siddareddygari <msiddare@cisco.com>
+---
+ drivers/hwmon/pmbus/ltc2978.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/hwmon/pmbus/ltc2978.c b/drivers/hwmon/pmbus/ltc2978.c
+index 94eea2ac6..d43f2d0c8 100644
+--- a/drivers/hwmon/pmbus/ltc2978.c
++++ b/drivers/hwmon/pmbus/ltc2978.c
+@@ -27,8 +27,8 @@
+ #include <linux/regulator/driver.h>
+ #include "pmbus.h"
+ 
+-enum chips { ltc2974, ltc2975, ltc2977, ltc2978, ltc2980, ltc3880, ltc3882,
+-	ltc3883, ltc3886, ltc3887, ltm2987, ltm4675, ltm4676 };
++enum chips { ltc2974, ltc2975, ltc2977, ltc2978, ltc2979, ltc2980, ltc3880,
++	ltc3882, ltc3883, ltc3886, ltc3887, ltm2987, ltm4675, ltm4676 };
+ 
+ /* Common for all chips */
+ #define LTC2978_MFR_VOUT_PEAK		0xdd
+@@ -36,6 +36,8 @@ enum chips { ltc2974, ltc2975, ltc2977, ltc2978, ltc2980, ltc3880, ltc3882,
+ #define LTC2978_MFR_TEMPERATURE_PEAK	0xdf
+ #define LTC2978_MFR_SPECIAL_ID		0xe7	/* Undocumented on LTC3882 */
+ #define LTC2978_MFR_COMMON		0xef
++#define LTC2979_ID_A			0x8060
++#define LTC2979_ID_B			0x8070
+ 
+ /* LTC2974, LTC2975, LCT2977, LTC2980, LTC2978, and LTM2987 */
+ #define LTC2978_MFR_VOUT_MIN		0xfb
+@@ -503,6 +505,7 @@ static const struct i2c_device_id ltc2978_id[] = {
+ 	{"ltc2975", ltc2975},
+ 	{"ltc2977", ltc2977},
+ 	{"ltc2978", ltc2978},
++	{"ltc2979", ltc2979},
+ 	{"ltc2980", ltc2980},
+ 	{"ltc3880", ltc3880},
+ 	{"ltc3882", ltc3882},
+@@ -569,6 +572,8 @@ static int ltc2978_get_id(struct i2c_client *client)
+ 		return ltc2977;
+ 	else if (chip_id == LTC2978_ID_REV1 || chip_id == LTC2978_ID_REV2)
+ 		return ltc2978;
++	else if (chip_id == LTC2979_ID_A || chip_id == LTC2979_ID_B)
++		return ltc2979;
+ 	else if (chip_id == LTC2980_ID_A || chip_id == LTC2980_ID_B)
+ 		return ltc2980;
+ 	else if (chip_id == LTC3880_ID)
+@@ -668,6 +673,7 @@ static int ltc2978_probe(struct i2c_client *client,
+ 		break;
+ 	case ltc2977:
+ 	case ltc2978:
++	case ltc2979:
+ 	case ltc2980:
+ 	case ltm2987:
+ 		info->read_word_data = ltc2978_read_word_data;
+@@ -761,6 +767,7 @@ static const struct of_device_id ltc2978_of_match[] = {
+ 	{ .compatible = "lltc,ltc2975" },
+ 	{ .compatible = "lltc,ltc2977" },
+ 	{ .compatible = "lltc,ltc2978" },
++	{ .compatible = "lltc,ltc2979" },
+ 	{ .compatible = "lltc,ltc2980" },
+ 	{ .compatible = "lltc,ltc3880" },
+ 	{ .compatible = "lltc,ltc3882" },
+@@ -788,5 +795,5 @@ static struct i2c_driver ltc2978_driver = {
+ module_i2c_driver(ltc2978_driver);
+ 
+ MODULE_AUTHOR("Guenter Roeck");
+-MODULE_DESCRIPTION("PMBus driver for LTC2978 and comppatible chips");
++MODULE_DESCRIPTION("PMBus driver for LTC2978 and compatible chips");
+ MODULE_LICENSE("GPL");
+-- 
+2.26.2
+
