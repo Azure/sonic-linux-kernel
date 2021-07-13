@@ -41,7 +41,7 @@ index d314c1f..313165a 100644
 +	int val;
 +
 +	mutex_lock(&data->update_lock);
-+	val = pmbus_read_word_data(client, 0, PMBUS_STATUS_WORD);
++	val = pmbus_read_word_data(client, 0, 0xff, PMBUS_STATUS_WORD);
 +	pmbus_clear_faults(client);
 +	mutex_unlock(&data->update_lock);
 +	if (val < 0) {

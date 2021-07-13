@@ -34,14 +34,14 @@ index f737f6480..d60c48e2c 100644
  
 +enum chips { dps1900, dps200 };
 +
- static int dps1900_read_word_data(struct i2c_client *client, int page, int reg)
+ static int dps1900_read_word_data(struct i2c_client *client, int page, int phase, int reg)
  {
  	if (reg >= PMBUS_VIRT_BASE ||
-@@ -30,24 +34,112 @@ static int dps1900_read_word_data(struct i2c_client *client, int page, int reg)
- 	return pmbus_read_word_data(client, page, reg);
+@@ -30,24 +34,112 @@ static int dps1900_read_word_data(struct i2c_client *client, int page, int phase, int reg)
+ 	return pmbus_read_word_data(client, page, phase, reg);
  }
  
-+static int dps200_read_word_data(struct i2c_client *client, int page, int reg)
++static int dps200_read_word_data(struct i2c_client *client, int page, int phase, int reg)
 +{
 +
 +	if (reg >= PMBUS_VIRT_BASE ||
@@ -70,7 +70,7 @@ index f737f6480..d60c48e2c 100644
 +	else if (reg == PMBUS_IOUT_OC_FAULT_LIMIT)
 +		return 0xc8;
 +	else
-+		return pmbus_read_word_data(client, page, reg);
++		return pmbus_read_word_data(client, page, phase, reg);
 +}
 +
  static struct pmbus_driver_info dps1900_info = {
@@ -126,7 +126,7 @@ index f737f6480..d60c48e2c 100644
  static int dps1900_probe(struct i2c_client *client,
  			 const struct i2c_device_id *id)
  {
--	return pmbus_do_probe(client, id, &dps1900_info);
+-	return pmbus_do_probe(client, &dps1900_info);
 +	struct pmbus_driver_info *info;
 +
 +	info = devm_kzalloc(&client->dev, sizeof(struct pmbus_driver_info),
@@ -146,7 +146,7 @@ index f737f6480..d60c48e2c 100644
 +		return -ENODEV;
 +	}
 +
-+	return pmbus_do_probe(client, id, info);
++	return pmbus_do_probe(client, info);
  }
  
  static const struct i2c_device_id dps1900_id[] = {

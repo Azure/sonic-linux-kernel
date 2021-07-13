@@ -63,4 +63,4 @@ index 2e6a88094..d54ba3f75 100644
 +		dev->dev_addr[0] = (hi >> 8) & 0xff;
  	}
  
- 	if (!is_valid_ether_addr(&dev->dev_addr[0])) {
+ 	if (!is_valid_ether_addr(&dev->dev_addr[0]))

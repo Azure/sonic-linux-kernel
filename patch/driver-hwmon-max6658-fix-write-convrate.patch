@@ -15,7 +15,7 @@ index c2f411c29..9d1a68d99 100644
 --- a/drivers/hwmon/lm90.c
 +++ b/drivers/hwmon/lm90.c
 @@ -580,6 +580,33 @@ static inline int lm90_select_remote_channel(struct i2c_client *client,
- 	return 0;
+ 	return err;
  }
  
 +static int max6657_write_convrate(struct i2c_client *client, int val)

@@ -3,9 +3,9 @@ SHELL = /bin/bash
 .SHELLFLAGS += -e
 
 KERNEL_ABI_MINOR_VERSION = 2
-KVERSION_SHORT ?= 4.19.0-12-$(KERNEL_ABI_MINOR_VERSION)
+KVERSION_SHORT ?= 5.10.0-7-$(KERNEL_ABI_MINOR_VERSION)
 KVERSION ?= $(KVERSION_SHORT)-amd64
-KERNEL_VERSION ?= 4.19.152
+KERNEL_VERSION ?= 5.10.40
 KERNEL_SUBVERSION ?= 1
 kernel_procure_method ?= build
 CONFIGURED_ARCH ?= amd64
@@ -91,6 +91,8 @@ $(addprefix $(DEST)/, $(MAIN_TARGET)): $(DEST)/% :
 	git add debian/control -f
 	git add debian/rules.gen -f
 	git add debian/tests/control -f
+	git add debian/*.maintscript -f
+	git add debian/*.bug-presubj -f
 	git commit -m "unmodified debian source"
 
 	# Learning new git repo head (above commit) by calling stg repair.

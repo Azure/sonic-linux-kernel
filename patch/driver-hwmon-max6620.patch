@@ -15,7 +15,7 @@ index c7adaca2a..d0b4b1b34 100644
 --- a/drivers/hwmon/Kconfig
 +++ b/drivers/hwmon/Kconfig
 @@ -905,6 +905,16 @@ config SENSORS_MAX6650
- 	  This driver can also be built as a module.  If so, the module
+ 	  This driver can also be built as a module. If so, the module
  	  will be called max6650.
  
 +config SENSORS_MAX6620
@@ -25,7 +25,7 @@ index c7adaca2a..d0b4b1b34 100644
 +	  If you say yes here you get support for the MAX6620
 +	  sensor chips.
 +
-+	  This driver can also be built as a module.  If so, the module
++	  This driver can also be built as a module. If so, the module
 +	  will be called max6620.
 +
  config SENSORS_MAX6697

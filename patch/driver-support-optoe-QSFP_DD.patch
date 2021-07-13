@@ -108,13 +108,13 @@ index c22b92a29..16287fdc5 100644
 +	if (dev_class == TWO_ADDR) {
 +		/* SFP family */
 +		/* if it doesn't exist, create 0x51 i2c address */
-+		if (!optoe->client[1]) {
-+			optoe->client[1] = i2c_new_dummy(client->adapter, 0x51);
-+			if (!optoe->client[1]) {
++		if (!optoe->client[1] || IS_ERR(optoe->client[1])) {
++			optoe->client[1] = i2c_new_dummy_device(client->adapter, 0x51);
++			if (IS_ERR(optoe->client[1])) {
 +				dev_err(&client->dev,
 +					"address 0x51 unavailable\n");
 +				mutex_unlock(&optoe->lock);
-+				return -EADDRINUSE;
++				return PTR_ERR(optoe->client[1]);
 +			}
 +		}
 +		optoe->bin.size = TWO_ADDR_EEPROM_SIZE;

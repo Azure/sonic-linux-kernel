@@ -35,8 +35,8 @@ index 01234567..89abcdef 100644
 --- a/drivers/pci/Kconfig
 +++ b/drivers/pci/Kconfig
 @@ -144,6 +144,12 @@ config PCI_HYPERV
-           The PCI device frontend driver allows the kernel to import arbitrary
-           PCI devices from a PCI backend to support PCI driver domains.
+ 
+ endchoice
  
 +config PCI_REASSIGN_PREF_MEM
 +	bool "PCI reassign prefetchable memory"
@@ -52,7 +52,7 @@ index 01234567..89abcdef 100644
 --- a/drivers/pci/Makefile
 +++ b/drivers/pci/Makefile
 @@ -28,6 +28,8 @@ obj-$(CONFIG_PCI_PF_STUB)	+= pci-pf-stub.o
- obj-$(CONFIG_PCI_ECAM)		+= ecam.o
+ obj-$(CONFIG_PCI_P2PDMA)	+= p2pdma.o
  obj-$(CONFIG_XEN_PCIDEV_FRONTEND) += xen-pcifront.o
  
 +obj-$(CONFIG_PCI_REASSIGN_PREF_MEM) += setup-prefmem.o
@@ -411,8 +411,8 @@ index 01234567..89abcdef 100644
 --- a/include/linux/pci.h
 +++ b/include/linux/pci.h
 @@ -622,6 +622,17 @@ static inline struct pci_dev *pci_upstream_bridge(struct pci_dev *dev)
- struct device *pci_get_host_bridge_device(struct pci_dev *dev);
- void pci_put_host_bridge_device(struct device *dev);
+ 	return dev->bus->self;
+ }
  
 +#ifdef CONFIG_PCI_REASSIGN_PREF_MEM
 +extern void pci_reassign_prefmem_res(void);

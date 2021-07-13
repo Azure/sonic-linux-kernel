@@ -30,7 +30,7 @@ index a82018aaf..720945848 100644
 +
  config SENSORS_MAX8688
  	tristate "Maxim MAX8688"
- 	default n
+ 	help
 diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
 index ea0e39518..c67f5a290 100644
 --- a/drivers/hwmon/pmbus/Makefile
@@ -41,8 +41,8 @@ index ea0e39518..c67f5a290 100644
  obj-$(CONFIG_SENSORS_MAX34440)	+= max34440.o
 +obj-$(CONFIG_SENSORS_DNI_DPS460) += dni_dps460.o
  obj-$(CONFIG_SENSORS_MAX8688)	+= max8688.o
- obj-$(CONFIG_SENSORS_TPS40422)	+= tps40422.o
- obj-$(CONFIG_SENSORS_TPS53679)	+= tps53679.o
+ obj-$(CONFIG_SENSORS_MP2975)	+= mp2975.o
+ obj-$(CONFIG_SENSORS_PXE1610)	+= pxe1610.o
 diff --git a/drivers/hwmon/pmbus/dni_dps460.c b/drivers/hwmon/pmbus/dni_dps460.c
 new file mode 100644
 index 000000000..ad29134c4
@@ -158,7 +158,7 @@ index 000000000..ad29134c4
 +	 * The slope is (FAN_RPM_MIN/FAN_VALUE_MIN) = 180
 +	 */
 +	mutex_lock(&data->update_lock);
-+	val = pmbus_read_word_data(client, 0, PMBUS_FAN_COMMAND_1);
++	val = pmbus_read_word_data(client, 0, 0xff, PMBUS_FAN_COMMAND_1);
 +	pmbus_clear_faults(client);
 +	mutex_unlock(&data->update_lock);
 +	if (val < 0) {
@@ -258,7 +258,7 @@ index 000000000..ad29134c4
 +	info->func[0] = PMBUS_HAVE_FAN12 | PMBUS_HAVE_STATUS_FAN12 |
 +		PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2 | PMBUS_HAVE_STATUS_TEMP;
 +
-+	ret = pmbus_do_probe(client, id, info);
++	ret = pmbus_do_probe(client, info);
 +	if (ret < 0)
 +		goto out;
 +

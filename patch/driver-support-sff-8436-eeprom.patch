@@ -17,8 +17,8 @@ index d382b13c2..e3acc9b2a 100644
 --- a/drivers/misc/eeprom/Kconfig
 +++ b/drivers/misc/eeprom/Kconfig
 @@ -111,4 +111,16 @@ config EEPROM_IDT_89HPESX
- 	  This driver can also be built as a module. If so, the module
- 	  will be called idt_89hpesx.
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called ee1004.
  
 +config EEPROM_SFF_8436
 +	tristate "SFF-8436 QSFP EEPROMs support"
@@ -38,9 +38,9 @@ index 2aab60ef3..6a6d90ffe 100644
 --- a/drivers/misc/eeprom/Makefile
 +++ b/drivers/misc/eeprom/Makefile
 @@ -7,3 +7,4 @@ obj-$(CONFIG_EEPROM_93CX6)	+= eeprom_93cx6.o
- obj-$(CONFIG_EEPROM_93XX46)	+= eeprom_93xx46.o
  obj-$(CONFIG_EEPROM_DIGSY_MTC_CFG) += digsy_mtc_eeprom.o
  obj-$(CONFIG_EEPROM_IDT_89HPESX) += idt_89hpesx.o
+ obj-$(CONFIG_EEPROM_EE1004)	+= ee1004.o
 +obj-$(CONFIG_EEPROM_SFF_8436)	+= sff_8436_eeprom.o
 diff --git a/drivers/misc/eeprom/sff_8436_eeprom.c b/drivers/misc/eeprom/sff_8436_eeprom.c
 new file mode 100644
